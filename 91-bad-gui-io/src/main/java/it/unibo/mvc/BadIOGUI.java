@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -28,6 +30,8 @@ import java.util.Random;
  */
 public class BadIOGUI {
 
+    /*pls note the var PATH, remember MULTIPLATFORM */
+
     private static final String TITLE = "A very simple GUI application";
     private static final String PATH = System.getProperty("user.home")
         + File.separator
@@ -40,10 +44,16 @@ public class BadIOGUI {
      * Creates a new BadIOGUI.
      */
     public BadIOGUI() {
+        final JPanel myCanvas= new JPanel();
+        myCanvas.setLayout(new BoxLayout(myCanvas,BoxLayout.X_AXIS));
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
         final JButton write = new JButton("Write on file");
+        final JButton read = new JButton("Read from file (???)");
         canvas.add(write, BorderLayout.CENTER);
+        canvas.add(myCanvas, BorderLayout.CENTER);
+        myCanvas.add(read);
+        myCanvas.add(write);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
@@ -69,6 +79,23 @@ public class BadIOGUI {
                 }
             }
         );
+
+        read.addActionListener(
+            new ActionListener() {
+                @Override 
+                public void actionPerformed(final ActionEvent event) {
+                    final List<String> list = new ArrayList<>();
+
+                    try {
+                        list.addAll(Files.readAllLines(Path.of(PATH), StandardCharsets.UTF_8));
+                        System.out.println(list);
+                    }catch(IOException e) {
+                        JOptionPane.showMessageDialog(frame, e, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    
+                }
+            }
+        );
     }
 
     private void display() {
@@ -90,6 +117,7 @@ public class BadIOGUI {
          * on screen. Results may vary, but it is generally the best choice.
          */
         frame.setLocationByPlatform(true);
+        frame.pack();
         /*
          * OK, ready to push the frame onscreen
          */
